@@ -3,9 +3,9 @@
 ```js
 const { Client } = require("camunda-external-task-handler-js");
 
-const client = new Client({ baseUrl: "http://localhost:8080/engine-rest" });
+const client = new Client({baseUrl: "http://localhost:8080/engine-rest"});
 
-client.subscribe("foo", async function({ task, taskService}) {
+client.subscribe("foo", async function({task, taskService}) {
   // Put your business logic
 });
 ```
@@ -24,10 +24,12 @@ Here"s a list of the available options:
 | baseUrl | Path to the engine api | string | ✓ |  |
 | workerId | The id of the worker on which behalf tasks are fetched. The returned tasks are locked for that worker and can only be completed when providing the same worker id. | string |  | "some-random-id" |
 | maxTasks | The maximum number of tasks to fetch | number |  | 10 |
+| maxParallelExecutions | The maximum number of tasks to be worked on simultaneously | number |  |  |
 | interval | Interval of time to wait before making a new poll. | number |  | 300 |
 | lockDuration | The default duration to lock the external tasks for in milliseconds. | number |  | 50000 |
 | autoPoll | If true, then polling start automatically as soon as a Client instance is created. | boolean |  | true |
 | asyncResponseTimeout | The Long Polling timeout in milliseconds. | number |  |  |
+| usePriority | If false, task will be fetched arbitrarily instead of based on its priority. | boolean |  | true |
 | interceptors | Function(s) that will be called before a request is sent. Interceptors receive the configuration of the request and return a new configuration. | function or [function] |  |  |
 | use | Function(s) that have access to the client instance as soon as it is created and before any polling happens.  Check out [logger](/lib/logger.js) for a better understanding of the usage of middlewares. | function or [function] |  |  |
 
@@ -69,8 +71,10 @@ The currently supported options are:
 | processDefinitionIdIn  | A value which allows to filter tasks based on process definition ids         | string |          |                                                       |
 | processDefinitionKey  | A value which allows to filter tasks based on process definition key         | string |          |                                                       |
 | processDefinitionKeyIn  | A value which allows to filter tasks based on process definition keys         | string |          |                                                       |
-| withoutTenantId  | A value which allows to filter tasks based on tenant ids         | string |          |                                                       |
-| tenantIdIn   | A value which allows to filter tasks without tenant id                              | boolean |         |                                                       |
+| processDefinitionVersionTag  | A value which allows to filter tasks based on process definition Version Tag         | string |          |
+| processVariables  | A JSON object used for filtering tasks based on process instance variable values. A property name of the object represents a process variable name, while the property value represents the process variable value to filter tasks by.         | object |          |                                                       |
+| tenantIdIn | A value which allows to filter tasks based on tenant ids         | string |          |                                                       |
+| withoutTenantId | A value which allows to filter tasks without tenant id                              | boolean |         |                                                       |
 | deserializeValues | If set to true, a serializable variable will be deserialized on server side and transformed to JSON using Jackson's POJO/bean property introspection feature. | boolean |                                                       |     
 
 ### About topic subscriptions
@@ -83,13 +87,20 @@ A topic subscription, which is returned by the **subscribe()** method, is a an o
 * **variables:** the selected subset of variables.
 
 ```js
-const { Client } = require("camunda-external-task-client-js");
+const {Client} = require("camunda-external-task-client-js");
 
-const client = new Client({ baseUrl: "http://localhost:8080/engine-rest" });
+const client = new Client({baseUrl: "http://localhost:8080/engine-rest"});
 
-const topicSubscription = client.subscribe("foo", async function({ task, taskService}) {
-  // Put your business logic
-});
+const topicSubscription = client.subscribe(
+  "foo",
+  {
+    // Put your options here
+    processDefinitionVersionTag: "v2"
+  },
+  async function({task, taskService}) {
+    // Put your business logic
+  }
+);
 
 // unsubscribe from a topic
 topicSubscription.unsubscribe();

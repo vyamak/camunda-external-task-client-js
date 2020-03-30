@@ -39,6 +39,7 @@ Array [
           "processKey",
           "processKey2",
         ],
+        "processDefinitionVersionTag": "versionTag",
         "tenantIdIn": Array [
           "tenantId",
         ],
@@ -50,6 +51,7 @@ Array [
         "withoutTenantId": true,
       },
     ],
+    "usePriority": true,
   },
 ]
 `;

@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.3.0
+### Features
+- Use priority when fetching Tasks
+- Filter tasks by version tag
+
+## 1.2.0
+### Features
+- Set maximum number of executed tasks using `maxParallelExecutions`
+
 ## 1.1.1
 ### Features
 - Filter tasks by tenant
